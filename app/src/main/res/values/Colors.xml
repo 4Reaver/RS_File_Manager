@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <resources>
     <color name="item_text_color">#FF00FF00</color>
+    <color name="item_text_selected">#FFFF0000</color>
 </resources>
