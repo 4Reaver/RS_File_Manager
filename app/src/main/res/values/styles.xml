@@ -5,4 +5,11 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="item_text">
+        <item name="android:layout_marginTop">@dimen/item_text_margin</item>
+        <item name="android:layout_marginBottom">@dimen/item_text_margin</item>
+        <item name="android:textSize">@dimen/item_text_size</item>
+        <item name="android:textColor">@color/item_text_color</item>
+    </style>
+
 </resources>

@@ -18,9 +18,6 @@
         android:layout_height="match_parent"
         android:text=""
         android:layout_weight="1"
-        android:layout_marginTop="@dimen/item_text_margin"
-        android:layout_marginBottom="@dimen/item_text_margin"
-        android:textSize="@dimen/item_text_size"
-        android:textColor="@color/item_text_color"
+        style="@style/item_text"
         android:gravity="center_vertical"/>
 </LinearLayout>

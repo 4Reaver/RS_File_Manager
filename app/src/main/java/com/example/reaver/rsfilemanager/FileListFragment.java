@@ -27,6 +27,7 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
     private FileListAdapter adapter;
     private ListView lvFileList;
     private View rootFolder;
+    private TextView tvFolderName;
 
     @Override
     public void onAttach(Activity activity) {
@@ -50,6 +51,9 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         lvFileList.setAdapter(adapter);
         lvFileList.setOnItemClickListener(this);
 
+        tvFolderName = (TextView) v.findViewById(R.id.tvCurrentFolder);
+        tvFolderName.setText(getFolderName());
+
         return v;
     }
 
@@ -71,14 +75,25 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
 
         if ( selectedFile.getParentFile() == null ) {
             lvFileList.removeHeaderView(rootFolder);
-        } else if ( currentFolder.getParentFile() == null && selectedFile.isDirectory() ) {
+        } else if ( isCurrentRoot && selectedFile.isDirectory() ) {
             lvFileList.addHeaderView(rootFolder);
         }
 
         if ( selectedFile.isDirectory() ) {
             currentFolder = selectedFile;
+            tvFolderName.setText(getFolderName());
             adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
             adapter.notifyDataSetChanged();
         }
+    }
+
+    private String getFolderName() {
+        String name = currentFolder.getName();
+
+        if ( name.equals("") ) {
+            return "/";
+        }
+
+        return "../" + name;
     }
 }

@@ -4,6 +4,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tvCurrentFolder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/item_text"
+        android:gravity="center"/>
     <ListView
         android:id="@+id/lvFileList"
         android:layout_width="match_parent"
