@@ -2,9 +2,11 @@ package com.example.reaver.rsfilemanager;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +19,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
  * Created by Reaver on 09.08.2014.
  */
 public class FileListFragment extends Fragment implements AdapterView.OnItemClickListener {
-    private File currentFolder = Environment.getRootDirectory();
+    private Context context;
+    private File currentFolder;
     private FileListAdapter adapter;
     private ListView lvFileList;
     private View rootFolder;
@@ -32,6 +36,8 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        this.context = activity.getApplicationContext();
+        currentFolder = context.getFilesDir();
     }
 
     @Override
@@ -50,11 +56,17 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         lvFileList.addHeaderView(rootFolder, null, true);
         lvFileList.setAdapter(adapter);
         lvFileList.setOnItemClickListener(this);
+        //registerForContextMenu(lvFileList);
 
         tvFolderName = (TextView) v.findViewById(R.id.tvCurrentFolder);
         tvFolderName.setText(getFolderName());
 
         return v;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
     }
 
     @Override
@@ -73,13 +85,13 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
             return;
         }
 
-        if ( selectedFile.getParentFile() == null ) {
-            lvFileList.removeHeaderView(rootFolder);
-        } else if ( isCurrentRoot && selectedFile.isDirectory() ) {
-            lvFileList.addHeaderView(rootFolder);
-        }
-
         if ( selectedFile.isDirectory() ) {
+            if ( selectedFile.getParentFile() == null ) {
+                lvFileList.removeHeaderView(rootFolder);
+            } else if ( isCurrentRoot ) {
+                lvFileList.addHeaderView(rootFolder);
+            }
+
             currentFolder = selectedFile;
             tvFolderName.setText(getFolderName());
             adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
@@ -95,5 +107,19 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         }
 
         return "../" + name;
+    }
+
+    public void createFile(String newName) {
+        try {
+            if ( new File(currentFolder, newName).createNewFile() ) {
+                Toast.makeText(getActivity(), "Created file: " + newName, Toast.LENGTH_SHORT).show();
+                adapter.notifyDataSetChanged();
+            } else {
+                Toast.makeText(getActivity(), "Cannot create file: " + newName, Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(getActivity(), "Cannot create file: " + newName, Toast.LENGTH_SHORT).show();
+        }
     }
 }
