@@ -9,7 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/item_text"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:ellipsize="marquee"
+        android:singleLine="true"/>
     <ListView
         android:id="@+id/lvFileList"
         android:layout_width="match_parent"

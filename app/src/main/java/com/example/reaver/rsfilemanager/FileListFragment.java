@@ -38,6 +38,8 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         super.onAttach(activity);
         this.context = activity.getApplicationContext();
         currentFolder = context.getFilesDir();
+        //currentFolder = Environment.getRootDirectory();
+        //currentFolder = Environment.getDataDirectory();
     }
 
     @Override
@@ -100,7 +102,7 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     private String getFolderName() {
-        String name = currentFolder.getName();
+        String name = currentFolder.getAbsolutePath();
 
         if ( name.equals("") ) {
             return "/";
@@ -120,6 +122,15 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(getActivity(), "Cannot create file: " + newName, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void createDir(String newName) {
+        if ( new File(currentFolder, newName).mkdir() ) {
+            Toast.makeText(getActivity(), "Created dir: " + newName, Toast.LENGTH_SHORT).show();
+            adapter.notifyDataSetChanged();
+        } else {
+            Toast.makeText(getActivity(), "Cannot create dir: " + newName, Toast.LENGTH_SHORT).show();
         }
     }
 }

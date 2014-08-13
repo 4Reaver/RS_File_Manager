@@ -44,6 +44,8 @@ public class FileListActivity extends Activity  implements CreateFileDialogFragm
             return true;
         } else if ( id == CREATE_FILE_MENU_ID ) {
             createFileDialogFragment.show(getFragmentManager(), CREATE_FILE_TAG);
+        } else if ( id == CREATE_DIR_MENU_ID ) {
+            createFileDialogFragment.show(getFragmentManager(), CREATE_DIR_TAG);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -52,6 +54,8 @@ public class FileListActivity extends Activity  implements CreateFileDialogFragm
     public void onDialogNewFileResult(String newName, String tag) {
         if ( tag.equals(CREATE_FILE_TAG) ) {
             fileListFragment.createFile(newName);
+        } else if ( tag.equals(CREATE_DIR_TAG ) ) {
+            fileListFragment.createDir(newName);
         }
     }
 }
