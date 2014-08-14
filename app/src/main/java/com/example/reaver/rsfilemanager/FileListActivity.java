@@ -11,6 +11,7 @@ public class FileListActivity extends Activity  implements CreateFileDialogFragm
     private static final int CREATE_DIR_MENU_ID = 2;
     public static final String CREATE_FILE_TAG = "CreateFile";
     public static final String CREATE_DIR_TAG = "CreateDir";
+    public static final String LOG_TAG = "My";
 
     private FileListFragment fileListFragment;
     private CreateFileDialogFragment createFileDialogFragment;

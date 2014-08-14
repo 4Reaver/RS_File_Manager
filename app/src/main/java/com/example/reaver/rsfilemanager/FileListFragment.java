@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -53,6 +54,7 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         rootFolder = inflater.inflate(R.layout.file_item, null);
         ((TextView) rootFolder.findViewById(R.id.item_text)).setText("..");
         ((ImageView) rootFolder.findViewById(R.id.item_icon)).setImageResource(R.drawable.folder_icon);
+        rootFolder.findViewById(R.id.cbItem).setVisibility(View.GONE);
 
         lvFileList = (ListView) v.findViewById(R.id.lvFileList);
         lvFileList.addHeaderView(rootFolder, null, true);

@@ -23,6 +23,10 @@ public class CustomFile extends File {
         checked = !checked;
     }
 
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
+
     public static ArrayList<CustomFile> convert(File[] files) {
         int size = files.length;
         ArrayList<CustomFile> fileList = new ArrayList<CustomFile>();
