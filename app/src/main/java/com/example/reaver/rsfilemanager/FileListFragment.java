@@ -135,4 +135,23 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
             Toast.makeText(getActivity(), "Cannot create dir: " + newName, Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void deleteSelected() {
+        ArrayList<CustomFile> files = adapter.getFiles();
+
+        for ( int i = files.size() - 1; i >= 0; i-- ) {
+            CustomFile file = files.get(i);
+
+            if ( file.isChecked() && file.canWrite() ) {
+                boolean del = file.delete();
+
+                if ( del ) {
+                    files.remove(i);
+                } else {
+                    Toast.makeText(getActivity(), file.getName() + " must be empty", Toast.LENGTH_LONG ).show();
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
 }

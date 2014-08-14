@@ -6,15 +6,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class FileListActivity extends Activity  implements CreateFileDialogFragment.DialogListener{
+public class FileListActivity extends Activity  implements CreateFileDialogFragment.CreateDialogListener
+        , DeleteDialogFragment.DeleteDialogListener {
     private static final int CREATE_FILE_MENU_ID = 1;
     private static final int CREATE_DIR_MENU_ID = 2;
+    private static final int DELETE_MENU_ID = 3;
     public static final String CREATE_FILE_TAG = "CreateFile";
     public static final String CREATE_DIR_TAG = "CreateDir";
+    public static final String DELETE_TAG = "DeleteTag";
     public static final String LOG_TAG = "My";
 
     private FileListFragment fileListFragment;
     private CreateFileDialogFragment createFileDialogFragment;
+    private DeleteDialogFragment deleteDialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +27,7 @@ public class FileListActivity extends Activity  implements CreateFileDialogFragm
 
         fileListFragment = (FileListFragment) getFragmentManager().findFragmentById(R.id.file_list_fragment);
         createFileDialogFragment = new CreateFileDialogFragment();
+        deleteDialogFragment = new DeleteDialogFragment();
     }
 
 
@@ -32,6 +37,7 @@ public class FileListActivity extends Activity  implements CreateFileDialogFragm
         getMenuInflater().inflate(R.menu.file_list, menu);
         menu.add(0, CREATE_FILE_MENU_ID, 0, "Create file");
         menu.add(0, CREATE_DIR_MENU_ID, 0, "Create directory");
+        menu.add(0, DELETE_MENU_ID, 0, "Delete selected");
         return true;
     }
 
@@ -47,6 +53,8 @@ public class FileListActivity extends Activity  implements CreateFileDialogFragm
             createFileDialogFragment.show(getFragmentManager(), CREATE_FILE_TAG);
         } else if ( id == CREATE_DIR_MENU_ID ) {
             createFileDialogFragment.show(getFragmentManager(), CREATE_DIR_TAG);
+        } else if (  id == DELETE_MENU_ID ) {
+            deleteDialogFragment.show(getFragmentManager(), DELETE_TAG);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -58,5 +66,10 @@ public class FileListActivity extends Activity  implements CreateFileDialogFragm
         } else if ( tag.equals(CREATE_DIR_TAG ) ) {
             fileListFragment.createDir(newName);
         }
+    }
+
+    @Override
+    public void onDeleteDialogResult() {
+        fileListFragment.deleteSelected();
     }
 }

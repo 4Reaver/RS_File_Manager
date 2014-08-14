@@ -12,19 +12,18 @@ import android.widget.EditText;
 /**
  * Created by Reaver on 11.08.2014.
  */
-public class CreateFileDialogFragment extends DialogFragment implements View.OnClickListener {
-    public interface CreateDialogListener {
-        public void onDialogNewFileResult(String newName, String tag);
+public class DeleteDialogFragment extends DialogFragment implements View.OnClickListener {
+    public interface DeleteDialogListener {
+        public void onDeleteDialogResult();
     }
 
-    CreateDialogListener activity;
-    EditText etNewFileName;
+    DeleteDialogListener activity;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            this.activity = (CreateDialogListener) activity;
+            this.activity = (DeleteDialogListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString().concat(" must implement DialogListener"));
         }
@@ -33,39 +32,24 @@ public class CreateFileDialogFragment extends DialogFragment implements View.OnC
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.create_file_dialog_fragment, container, false);
+        View view = inflater.inflate(R.layout.delete_dialog_fragment, container, false);
         Button btnOK = (Button) view.findViewById(R.id.btnOK);
         Button btnCancel = (Button) view.findViewById(R.id.btnCancel);
-
-        etNewFileName = (EditText) view.findViewById(R.id.etNewFileName);
 
         btnCancel.setOnClickListener(this);
         btnOK.setOnClickListener(this);
 
+        getDialog().setTitle("Delete selected?");
+
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        if ( getTag().equals(FileListActivity.CREATE_FILE_TAG) ) {
-            etNewFileName.setHint("Enter name of new File");
-            getDialog().setTitle("Create file");
-        } else if ( getTag().equals(FileListActivity.CREATE_DIR_TAG) ) {
-            etNewFileName.setHint("Enter name of new Dir");
-            getDialog().setTitle("Create dir");
-        }
-
-        super.onStart();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnOK:
-                String newName = etNewFileName.getText().toString();
-                activity.onDialogNewFileResult(newName, getTag());
+                activity.onDeleteDialogResult();
 
-                etNewFileName.setText("");
                 dismiss();
                 break;
             case R.id.btnCancel:

@@ -76,7 +76,6 @@ public class FileListAdapter extends BaseAdapter implements CompoundButton.OnChe
         checkBox.setOnCheckedChangeListener(this);
         checkBox.setChecked(file.isChecked());
         checkBox.setTag(file);
-        Log.d(FileListActivity.LOG_TAG, "getView works");
 
         return view;
     }
@@ -85,6 +84,5 @@ public class FileListAdapter extends BaseAdapter implements CompoundButton.OnChe
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         ((CustomFile) buttonView.getTag()).setChecked(isChecked);
         notifyDataSetChanged();
-        Log.d(FileListActivity.LOG_TAG, "onCheckedChanged works");
     }
 }
