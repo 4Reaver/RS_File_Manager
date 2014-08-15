@@ -12,7 +12,8 @@
         android:gravity="center"
         android:ellipsize="marquee"
         android:singleLine="true"
-        android:focusable="true"/>
+        android:focusable="true"
+        android:focusableInTouchMode="true"/>
     <ListView
         android:id="@+id/lvFileList"
         android:layout_width="match_parent"

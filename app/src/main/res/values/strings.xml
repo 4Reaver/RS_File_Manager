@@ -8,5 +8,10 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_save">Save</string>
     <string name="button_dont_save">Don\'t Save</string>
+    <string-array name="navigation_options">
+        <item>App dir</item>
+        <item>Root</item>
+        <item>External SD</item>
+    </string-array>
 
 </resources>

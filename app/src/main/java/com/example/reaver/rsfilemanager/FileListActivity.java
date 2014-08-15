@@ -1,11 +1,14 @@
 package com.example.reaver.rsfilemanager;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import java.io.File;
@@ -35,6 +38,9 @@ public class FileListActivity extends Activity  implements CreateFileDialogFragm
         deleteDialogFragment = new DeleteDialogFragment();
 
         fileListFragment = (FileListFragment) getFragmentManager().findFragmentById(R.id.file_list_fragment);
+
+        this.getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        //this.getActionBar().setDisplayShowTitleEnabled(false);
     }
 
 
@@ -99,6 +105,5 @@ public class FileListActivity extends Activity  implements CreateFileDialogFragm
         if ( resultCode == RESULT_OK ) {
             Toast.makeText(this, "File saved", Toast.LENGTH_LONG).show();
         }
-
     }
 }

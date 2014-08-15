@@ -1,16 +1,20 @@
 package com.example.reaver.rsfilemanager;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +25,7 @@ import java.util.ArrayList;
 /**
  * Created by Reaver on 09.08.2014.
  */
-public class FileListFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class FileListFragment extends Fragment implements AdapterView.OnItemClickListener, ActionBar.OnNavigationListener {
     private Context context;
     private File currentFolder;
     private FileListAdapter adapter;
@@ -55,10 +59,12 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         lvFileList.addHeaderView(rootFolder, null, true);
         lvFileList.setAdapter(adapter);
         lvFileList.setOnItemClickListener(this);
-        //registerForContextMenu(lvFileList);
 
         tvFolderName = (TextView) v.findViewById(R.id.tvCurrentFolder);
         tvFolderName.setText(getFolderName());
+
+        SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.navigation_options, R.layout.spinner_item);
+        getActivity().getActionBar().setListNavigationCallbacks(spinnerAdapter, this);
 
         return v;
     }
@@ -122,6 +128,7 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         try {
             if ( new File(currentFolder, newName).createNewFile() ) {
                 Toast.makeText(getActivity(), "Created file: " + newName, Toast.LENGTH_SHORT).show();
+                adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
                 adapter.notifyDataSetChanged();
             } else {
                 Toast.makeText(getActivity(), "Cannot create file: " + newName, Toast.LENGTH_SHORT).show();
@@ -135,6 +142,7 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
     public void createDir(String newName) {
         if ( new File(currentFolder, newName).mkdir() ) {
             Toast.makeText(getActivity(), "Created dir: " + newName, Toast.LENGTH_SHORT).show();
+            adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
             adapter.notifyDataSetChanged();
         } else {
             Toast.makeText(getActivity(), "Cannot create dir: " + newName, Toast.LENGTH_SHORT).show();
@@ -155,8 +163,29 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
                 } else {
                     Toast.makeText(getActivity(), file.getName() + " must be empty", Toast.LENGTH_LONG ).show();
                 }
+            } else if ( !file.canWrite() ) {
+                Toast.makeText(getActivity(), file.getName() + ": access denied", Toast.LENGTH_LONG ).show();
             }
         }
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        switch (itemPosition) {
+            case 0:
+                currentFolder = context.getFilesDir();
+                break;
+            case 1:
+                currentFolder = Environment.getRootDirectory();
+                break;
+            case 2:
+                currentFolder = Environment.getExternalStorageDirectory();
+                break;
+        }
+        tvFolderName.setText(getFolderName());
+        adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
+        adapter.notifyDataSetChanged();
+        return true;
     }
 }
