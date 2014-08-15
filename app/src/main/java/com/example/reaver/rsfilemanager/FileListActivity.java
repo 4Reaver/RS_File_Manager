@@ -1,9 +1,15 @@
 package com.example.reaver.rsfilemanager;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.IOException;
 
 
 public class FileListActivity extends Activity  implements CreateFileDialogFragment.CreateDialogListener
@@ -25,9 +31,10 @@ public class FileListActivity extends Activity  implements CreateFileDialogFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.file_list_activity);
 
-        fileListFragment = (FileListFragment) getFragmentManager().findFragmentById(R.id.file_list_fragment);
         createFileDialogFragment = new CreateFileDialogFragment();
         deleteDialogFragment = new DeleteDialogFragment();
+
+        fileListFragment = (FileListFragment) getFragmentManager().findFragmentById(R.id.file_list_fragment);
     }
 
 
@@ -71,5 +78,27 @@ public class FileListActivity extends Activity  implements CreateFileDialogFragm
     @Override
     public void onDeleteDialogResult() {
         fileListFragment.deleteSelected();
+    }
+
+    public void startEditingFile(File file) {
+        Intent intent = new Intent(this, EditFileActivity.class);
+        try {
+            intent.putExtra("path", file.getCanonicalPath());
+            startActivityForResult(intent, 42);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if ( requestCode != 42 ) {
+            return;
+        }
+
+        if ( resultCode == RESULT_OK ) {
+            Toast.makeText(this, "File saved", Toast.LENGTH_LONG).show();
+        }
+
     }
 }
