@@ -48,10 +48,10 @@ public class CreateFileDialogFragment extends DialogFragment implements View.OnC
     @Override
     public void onStart() {
         if ( getTag().equals(FileListActivity.CREATE_FILE_TAG) ) {
-            etNewFileName.setHint("Enter name of new File");
+            etNewFileName.setHint("Enter name of new file");
             getDialog().setTitle("Create file");
         } else if ( getTag().equals(FileListActivity.CREATE_DIR_TAG) ) {
-            etNewFileName.setHint("Enter name of new Dir");
+            etNewFileName.setHint("Enter name of new dir");
             getDialog().setTitle("Create dir");
         }
 
