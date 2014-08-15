@@ -5,6 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/item_height">
 
+    <CheckBox
+        android:id="@+id/cbItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:focusable="false"/>
     <ImageView
         android:id="@+id/item_icon"
         android:layout_width="wrap_content"
@@ -18,9 +24,6 @@
         android:layout_height="match_parent"
         android:text=""
         android:layout_weight="1"
-        android:layout_marginTop="@dimen/item_text_margin"
-        android:layout_marginBottom="@dimen/item_text_margin"
-        android:textSize="@dimen/item_text_size"
-        android:textColor="@color/item_text_color"
+        style="@style/item_text"
         android:gravity="center_vertical"/>
 </LinearLayout>
