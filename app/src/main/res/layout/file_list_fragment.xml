@@ -9,11 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/item_text"
+        android:textSize="@dimen/folderName_text_size"
         android:gravity="center"
         android:ellipsize="marquee"
         android:singleLine="true"
         android:focusable="true"
-        android:focusableInTouchMode="true"/>
+        android:focusableInTouchMode="true"
+        android:background="@color/tvFolderName_background"/>
     <ListView
         android:id="@+id/lvFileList"
         android:layout_width="match_parent"

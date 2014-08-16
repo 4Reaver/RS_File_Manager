@@ -3,4 +3,5 @@
 <resources>
     <color name="item_text_color">#FF00FF00</color>
     <color name="item_text_selected">#FFFF0000</color>
+    <color name="tvFolderName_background">#33FFFFFF</color>
 </resources>
