@@ -97,12 +97,24 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         return file.getParentFile() == null;
     }
 
+    private void configHeader(File selectedFile) {
+        if ( isRoot(selectedFile) ) {
+            lvFileList.removeHeaderView(headerParentFolder);
+        } else if ( isRoot(currentFolder) ) {
+            lvFileList.addHeaderView(headerParentFolder);
+        }
+    }
+
+    private void updateListView() {
+        adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
+        adapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         File selectedFile;
-        boolean isCurrentRoot = isRoot(currentFolder);
 
-        if ( position == 0 && !isCurrentRoot ) {
+        if ( position == 0 && !isRoot(currentFolder) ) {
             selectedFile = currentFolder.getParentFile();
         } else {
             selectedFile = (File) lvFileList.getAdapter().getItem(position);
@@ -113,16 +125,14 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         }
 
         if ( selectedFile.isDirectory() ) {
-            if ( isRoot(selectedFile) ) {
-                lvFileList.removeHeaderView(headerParentFolder);
-            } else if ( isCurrentRoot ) {
-                lvFileList.addHeaderView(headerParentFolder);
-            }
+            configHeader(selectedFile);
 
             currentFolder = selectedFile;
             tvFolderName.setText(getFolderName());
-            adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
-            adapter.notifyDataSetChanged();
+
+            updateListView();
+            //adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
+            //adapter.notifyDataSetChanged();
         } else if ( isTxtFile(selectedFile) && selectedFile.canWrite() ) {
             ((FileListActivity) getActivity()).startEditingFile(selectedFile);
         }
@@ -132,22 +142,23 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         try {
             if ( new File(currentFolder, newName).createNewFile() ) {
                 Toast.makeText(getActivity(), "Created file: " + newName, Toast.LENGTH_SHORT).show();
-                adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
-                adapter.notifyDataSetChanged();
+                updateListView();
+                //adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
+                //adapter.notifyDataSetChanged();
             } else {
                 Toast.makeText(getActivity(), "Cannot create file: " + newName, Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(getActivity(), "Cannot create file: " + newName, Toast.LENGTH_SHORT).show();
         }
     }
 
     public void createDir(String newName) {
         if ( new File(currentFolder, newName).mkdir() ) {
             Toast.makeText(getActivity(), "Created dir: " + newName, Toast.LENGTH_SHORT).show();
-            adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
-            adapter.notifyDataSetChanged();
+            updateListView();
+            //adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
+            //adapter.notifyDataSetChanged();
         } else {
             Toast.makeText(getActivity(), "Cannot create dir: " + newName, Toast.LENGTH_SHORT).show();
         }
@@ -176,20 +187,29 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        File newDestination;
         switch (itemPosition) {
             case 0:
-                currentFolder = context.getFilesDir();
+                newDestination = context.getFilesDir();
+                //newDestination = Environment.getDataDirectory();
                 break;
             case 1:
-                currentFolder = Environment.getRootDirectory();
+                newDestination = Environment.getRootDirectory();
                 break;
             case 2:
-                currentFolder = Environment.getExternalStorageDirectory();
+                newDestination = Environment.getExternalStorageDirectory();
+                break;
+            default:
+                newDestination = Environment.getRootDirectory();
                 break;
         }
+        configHeader(newDestination);
+        currentFolder = newDestination;
+
         tvFolderName.setText(getFolderName());
-        adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
-        adapter.notifyDataSetChanged();
+        updateListView();
+        //adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
+        //adapter.notifyDataSetChanged();
         return true;
     }
 }
