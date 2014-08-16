@@ -38,8 +38,6 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         super.onAttach(activity);
         this.context = activity.getApplicationContext();
         currentFolder = context.getFilesDir();
-        //currentFolder = Environment.getRootDirectory();
-        //currentFolder = Environment.getDataDirectory();
     }
 
     @Override
