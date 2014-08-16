@@ -19,10 +19,6 @@ public class CustomFile extends File {
         return checked;
     }
 
-    public void invertChek() {
-        checked = !checked;
-    }
-
     public void setChecked(boolean checked) {
         this.checked = checked;
     }

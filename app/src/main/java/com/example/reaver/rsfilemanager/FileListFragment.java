@@ -131,8 +131,6 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
             tvFolderName.setText(getFolderName());
 
             updateListView();
-            //adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
-            //adapter.notifyDataSetChanged();
         } else if ( isTxtFile(selectedFile) && selectedFile.canWrite() ) {
             ((FileListActivity) getActivity()).startEditingFile(selectedFile);
         }
@@ -143,8 +141,6 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
             if ( new File(currentFolder, newName).createNewFile() ) {
                 Toast.makeText(getActivity(), "Created file: " + newName, Toast.LENGTH_SHORT).show();
                 updateListView();
-                //adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
-                //adapter.notifyDataSetChanged();
             } else {
                 Toast.makeText(getActivity(), "Cannot create file: " + newName, Toast.LENGTH_SHORT).show();
             }
@@ -157,8 +153,6 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         if ( new File(currentFolder, newName).mkdir() ) {
             Toast.makeText(getActivity(), "Created dir: " + newName, Toast.LENGTH_SHORT).show();
             updateListView();
-            //adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
-            //adapter.notifyDataSetChanged();
         } else {
             Toast.makeText(getActivity(), "Cannot create dir: " + newName, Toast.LENGTH_SHORT).show();
         }
@@ -191,7 +185,6 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         switch (itemPosition) {
             case 0:
                 newDestination = context.getFilesDir();
-                //newDestination = Environment.getDataDirectory();
                 break;
             case 1:
                 newDestination = Environment.getRootDirectory();
@@ -208,8 +201,6 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
 
         tvFolderName.setText(getFolderName());
         updateListView();
-        //adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
-        //adapter.notifyDataSetChanged();
         return true;
     }
 }
