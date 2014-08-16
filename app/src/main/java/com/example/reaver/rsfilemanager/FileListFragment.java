@@ -30,7 +30,7 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
     private File currentFolder;
     private FileListAdapter adapter;
     private ListView lvFileList;
-    private View rootFolder;
+    private View headerParentFolder;
     private TextView tvFolderName;
 
     @Override
@@ -38,8 +38,6 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         super.onAttach(activity);
         this.context = activity.getApplicationContext();
         currentFolder = context.getFilesDir();
-        //currentFolder = Environment.getRootDirectory();
-        //currentFolder = Environment.getDataDirectory();
     }
 
     @Override
@@ -47,23 +45,19 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         View v = inflater.inflate(R.layout.file_list_fragment, container, false);
         File[] files = currentFolder.listFiles();
         ArrayList<CustomFile> fileList = CustomFile.convert(files);
+        SpinnerAdapter spinnerAdapter;
 
+        prepareHeader(inflater);
         adapter = new FileListAdapter(getActivity(), fileList);
-
-        rootFolder = inflater.inflate(R.layout.file_item, null);
-        ((TextView) rootFolder.findViewById(R.id.item_text)).setText("..");
-        ((ImageView) rootFolder.findViewById(R.id.item_icon)).setImageResource(R.drawable.folder_icon);
-        rootFolder.findViewById(R.id.cbItem).setVisibility(View.GONE);
-
         lvFileList = (ListView) v.findViewById(R.id.lvFileList);
-        lvFileList.addHeaderView(rootFolder, null, true);
+        lvFileList.addHeaderView(headerParentFolder, null, true);
         lvFileList.setAdapter(adapter);
         lvFileList.setOnItemClickListener(this);
 
         tvFolderName = (TextView) v.findViewById(R.id.tvCurrentFolder);
         tvFolderName.setText(getFolderName());
 
-        SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.navigation_options, R.layout.spinner_item);
+        spinnerAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.navigation_options, R.layout.spinner_item);
         getActivity().getActionBar().setListNavigationCallbacks(spinnerAdapter, this);
 
         return v;
@@ -74,36 +68,11 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         super.onCreateContextMenu(menu, v, menuInfo);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        File selectedFile;
-        boolean isCurrentRoot = currentFolder.getParentFile() == null;
-
-        if ( position == 0 && !isCurrentRoot ) {
-            selectedFile = currentFolder.getParentFile();
-        } else {
-            selectedFile = (File) lvFileList.getAdapter().getItem(position);
-        }
-
-        if ( !selectedFile.canRead() ) {
-            Toast.makeText(getActivity(), "Access denied", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if ( selectedFile.isDirectory() ) {
-            if ( selectedFile.getParentFile() == null ) {
-                lvFileList.removeHeaderView(rootFolder);
-            } else if ( isCurrentRoot ) {
-                lvFileList.addHeaderView(rootFolder);
-            }
-
-            currentFolder = selectedFile;
-            tvFolderName.setText(getFolderName());
-            adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
-            adapter.notifyDataSetChanged();
-        } else if ( isTxtFile(selectedFile) && selectedFile.canWrite() ) {
-            ((FileListActivity) getActivity()).startEditingFile(selectedFile);
-        }
+    private void prepareHeader(LayoutInflater inflater) {
+        headerParentFolder = inflater.inflate(R.layout.file_item, null);
+        ((TextView) headerParentFolder.findViewById(R.id.item_text)).setText("..");
+        ((ImageView) headerParentFolder.findViewById(R.id.item_icon)).setImageResource(R.drawable.folder_icon);
+        headerParentFolder.findViewById(R.id.cbItem).setVisibility(View.GONE);
     }
 
     private String getFolderName() {
@@ -124,26 +93,66 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
         return extension.equalsIgnoreCase("txt");
     }
 
+    private boolean isRoot(File file) {
+        return file.getParentFile() == null;
+    }
+
+    private void configHeader(File selectedFile) {
+        if ( isRoot(selectedFile) ) {
+            lvFileList.removeHeaderView(headerParentFolder);
+        } else if ( isRoot(currentFolder) ) {
+            lvFileList.addHeaderView(headerParentFolder);
+        }
+    }
+
+    private void updateListView() {
+        adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        File selectedFile;
+
+        if ( position == 0 && !isRoot(currentFolder) ) {
+            selectedFile = currentFolder.getParentFile();
+        } else {
+            selectedFile = (File) lvFileList.getAdapter().getItem(position);
+        }
+        if ( !selectedFile.canRead() ) {
+            Toast.makeText(getActivity(), "Access denied", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if ( selectedFile.isDirectory() ) {
+            configHeader(selectedFile);
+
+            currentFolder = selectedFile;
+            tvFolderName.setText(getFolderName());
+
+            updateListView();
+        } else if ( isTxtFile(selectedFile) && selectedFile.canWrite() ) {
+            ((FileListActivity) getActivity()).startEditingFile(selectedFile);
+        }
+    }
+
     public void createFile(String newName) {
         try {
             if ( new File(currentFolder, newName).createNewFile() ) {
                 Toast.makeText(getActivity(), "Created file: " + newName, Toast.LENGTH_SHORT).show();
-                adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
-                adapter.notifyDataSetChanged();
+                updateListView();
             } else {
                 Toast.makeText(getActivity(), "Cannot create file: " + newName, Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(getActivity(), "Cannot create file: " + newName, Toast.LENGTH_SHORT).show();
         }
     }
 
     public void createDir(String newName) {
         if ( new File(currentFolder, newName).mkdir() ) {
             Toast.makeText(getActivity(), "Created dir: " + newName, Toast.LENGTH_SHORT).show();
-            adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
-            adapter.notifyDataSetChanged();
+            updateListView();
         } else {
             Toast.makeText(getActivity(), "Cannot create dir: " + newName, Toast.LENGTH_SHORT).show();
         }
@@ -172,20 +181,26 @@ public class FileListFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        File newDestination;
         switch (itemPosition) {
             case 0:
-                currentFolder = context.getFilesDir();
+                newDestination = context.getFilesDir();
                 break;
             case 1:
-                currentFolder = Environment.getRootDirectory();
+                newDestination = Environment.getRootDirectory();
                 break;
             case 2:
-                currentFolder = Environment.getExternalStorageDirectory();
+                newDestination = Environment.getExternalStorageDirectory();
+                break;
+            default:
+                newDestination = Environment.getRootDirectory();
                 break;
         }
+        configHeader(newDestination);
+        currentFolder = newDestination;
+
         tvFolderName.setText(getFolderName());
-        adapter.setFiles(CustomFile.convert(currentFolder.listFiles()));
-        adapter.notifyDataSetChanged();
+        updateListView();
         return true;
     }
 }

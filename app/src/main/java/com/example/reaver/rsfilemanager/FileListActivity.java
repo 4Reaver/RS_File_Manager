@@ -40,7 +40,7 @@ public class FileListActivity extends Activity  implements CreateFileDialogFragm
         fileListFragment = (FileListFragment) getFragmentManager().findFragmentById(R.id.file_list_fragment);
 
         this.getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        //this.getActionBar().setDisplayShowTitleEnabled(false);
+        this.getActionBar().setDisplayShowTitleEnabled(false);
     }
 
 

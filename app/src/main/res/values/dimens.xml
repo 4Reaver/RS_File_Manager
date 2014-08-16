@@ -6,5 +6,7 @@
     <dimen name="item_height">48dp</dimen>
     <dimen name="item_icon_margin">8dp</dimen>
     <dimen name="item_text_margin">4dp</dimen>
-    <dimen name="item_text_size">22sp</dimen>
+    <dimen name="item_text_size">18sp</dimen>
+    <dimen name="folderName_text_size">22sp</dimen>
+    <dimen name="spinner_text_size">22sp</dimen>
 </resources>
